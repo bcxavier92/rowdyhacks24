@@ -333,7 +333,7 @@ public class BattleScene extends Scene {
 				public void run() {
 					if(battle != null) {
 						Move m = botMoves[new Random().nextInt(botMoves.length)];
-						if(blockAttempted && System.currentTimeMillis() - blockTime < 400) {
+						if(blockAttempted && System.currentTimeMillis() - blockTime < 250) {
 							blockSuccessful = true;
 						}
 						attack(battle.getBot(), battle.getPlayer(), new Random().nextInt(15), m.getName(), m.getType());
@@ -353,7 +353,7 @@ public class BattleScene extends Scene {
 				}
 			};
 
-			int botTurnTime = 1000 + new Random().nextInt(2000);
+			int botTurnTime = 500 + new Random().nextInt(1500);
 			
 			Main.scheduler.scheduleTask(botTurn, botTurnTime);
 			Main.scheduler.scheduleTask(resetTurn, botTurnTime + 500);
