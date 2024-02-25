@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -32,6 +35,7 @@ public class Main {
 	
 	public static final String API_URL = "http://localhost:3000";
 	public static final int GROUND_LEVEL = 490;
+	public static BufferedImage wallpaper;
 	
 	public static JFrame frame;
 	public static JPanel panel;
@@ -59,6 +63,14 @@ public class Main {
 		scheduler = new DinoScheduler();
 		particleTracker = new ParticleTracker();
 		nav = new Nav();
+		
+		try {
+            String imagePath = "./images/wallpaper.png";
+            File file = new File(imagePath);
+            wallpaper = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 		
 		updateCollection();
 		currentDino = collection.get(0);
@@ -118,6 +130,8 @@ public class Main {
 			public void keyPressed(KeyEvent e) {
 				if(battleScene.isShowing()) {
 					battleScene.keyPressed(e.getKeyCode());
+				} else if(collectionScene.isShowing()) {
+					collectionScene.keyPressed(e.getKeyCode());
 				}
 			}
 		};

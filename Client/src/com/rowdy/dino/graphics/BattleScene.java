@@ -315,15 +315,15 @@ public class BattleScene extends Scene {
 			if(keyCode == KeyEvent.VK_1) {
 				String attackType = playerMoves[0].getType();
 				String attackName = playerMoves[0].getName();
-				attack(player, bot, new Random().nextInt(15), attackName, attackType);
+				attack(player, bot, new Random().nextInt(15000), attackName, attackType);
 			} else if(keyCode == KeyEvent.VK_2) {
 				String attackType = playerMoves[1].getType();
 				String attackName = playerMoves[1].getName();
-				attack(player, bot, new Random().nextInt(15), attackName, attackType);
+				attack(player, bot, new Random().nextInt(15000), attackName, attackType);
 			} else if(keyCode == KeyEvent.VK_3) {
 				String attackType = playerMoves[2].getType();
 				String attackName = playerMoves[2].getName();
-				attack(player, bot, new Random().nextInt(15), attackName, attackType);
+				attack(player, bot, new Random().nextInt(15000), attackName, attackType);
 			}
 			
 			battle.turn = 2;

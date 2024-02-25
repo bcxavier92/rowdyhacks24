@@ -34,6 +34,26 @@ db.on('disconnected', () => {
   console.log('Disconnected from MongoDB')
 })
 
+const init = async () => {
+  let caught = await CaughtModel.find({})
+  if (caught.length == 0) {
+    const dino = await attemptDinoGeneration(10)
+
+    const caught = new CaughtModel({
+      // @ts-ignore
+      dinoId: dino._id,
+    })
+
+    try {
+      await caught.save()
+    } catch (err) {
+      return
+    }
+  }
+}
+
+init()
+
 const app = express()
 app.use(bodyParser.json())
 

@@ -10,8 +10,7 @@ public class DeathScene extends Scene {
 	
 	@Override
 	public void render(Graphics g) {
-		g.setColor(Color.gray);
-		g.fillRect(Main.navWidth, 0, Main.frameSize.width - Main.navWidth, Main.frameSize.height);
+		g.drawImage(Main.wallpaper, Main.navWidth, 0, null);
 
 		g.setColor(Color.white);
 		g.setFont(new Font("SansSerif", 1, 50));

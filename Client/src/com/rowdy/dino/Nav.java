@@ -29,7 +29,7 @@ public class Nav {
 	}
 	
 	public void render(Graphics g) {
-		g.setColor(new Color(79, 69, 53));
+		g.setColor(new Color(62, 52, 40));
 		g.fillRect(0, 0, Main.navWidth, Main.frameSize.height);
 
 		g.drawImage(hamburger, 25, 25, 50, 50, null);

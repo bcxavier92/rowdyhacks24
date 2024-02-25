@@ -1,0 +1,38 @@
+package com.rowdy.dino;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class Nav {
+	private BufferedImage sword;
+	private BufferedImage hamburger;
+	public Nav() {
+		try {
+            String imagePath = "./images/sword.png";
+            File file = new File(imagePath);
+            sword = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		try {
+            String imagePath = "./images/hamburger.png";
+            File file = new File(imagePath);
+            hamburger = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	public void render(Graphics g) {
+		g.setColor(new Color(79, 69, 53));
+		g.fillRect(0, 0, Main.navWidth, Main.frameSize.height);
+
+		g.drawImage(hamburger, 25, 25, 50, 50, null);
+		g.drawImage(sword, 15, 90, 70, 70, null);
+	}
+}
