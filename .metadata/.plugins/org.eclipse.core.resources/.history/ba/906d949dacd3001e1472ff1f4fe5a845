@@ -1,0 +1,17 @@
+package com.rowdy.dino.graphics;
+
+public class Scene {
+	private boolean showing = false;
+	public Scene() {
+		
+	}
+	
+	public boolean isShowing() {
+		return showing;
+	}
+
+	public boolean setShowing(boolean showing) {
+		this.showing = showing;
+		return showing;
+	}
+}

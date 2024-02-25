@@ -1,0 +1,305 @@
+package com.rowdy.dino.graphics;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
+
+import com.rowdy.dino.Battle;
+import com.rowdy.dino.DinoUtil;
+import com.rowdy.dino.Main;
+import com.rowdy.dino.connection.RequestHandler;
+import com.rowdy.dino.entity.Dino;
+import com.rowdy.dino.entity.Entity;
+import com.rowdy.dino.entity.Move;
+import com.rowdy.dino.entity.Particle;
+
+public class BattleScene extends Scene {
+	
+	public static int HEALTH_BAR_WIDTH = 150;
+	
+	private BufferedImage background;
+	private BufferedImage dialogue;
+	private BufferedImage earthParticles;
+	
+	private Battle battle = null;
+	private boolean showDialogue;
+	
+	private long endBotDamage;
+	private long endPlayerDamage;
+	private long blockTime;
+	private boolean blockAttempted;
+	private boolean blockSuccessful;
+	
+	public BattleScene() {
+		try {
+            String imagePath = "./images/background.png";
+            File file = new File(imagePath);
+            background = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		try {
+            String imagePath = "./images/dialogue.png";
+            File file = new File(imagePath);
+            dialogue = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		try {
+            String imagePath = "./images/earthParticles.png";
+            File file = new File(imagePath);
+            earthParticles = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	public void stopBattle() {
+		battle = null;
+	}
+	
+	@Override
+	public void tick() {
+		if(battle != null) {
+			if(endPlayerDamage <= System.currentTimeMillis()) {
+				endPlayerDamage = 0;
+			}
+			
+			if(endBotDamage <= System.currentTimeMillis()) {
+				endBotDamage = 0;
+			}
+			
+			if(battle.getBot().health <= 0) {
+				Main.scheduler.scheduleTask(new Runnable() {
+					@Override
+					public void run() {
+						if(battle != null) {
+							Main.winScene.dino = battle.getBot().getDino();
+							Main.setScene(Main.winScene);
+							try {
+								RequestHandler.post(Main.API_URL + "/catch", null, "{\"id\":\"" + battle.getBot().getDino().getId() + "\"}");
+								Main.updateCollection();
+							} catch (IOException | URISyntaxException e) {
+								e.printStackTrace();
+							}
+							battle = null;
+						}
+					}
+				}, 500);
+			} else if(battle.getPlayer().health <= 0) {
+				Main.scheduler.scheduleTask(new Runnable() {
+					@Override
+					public void run() {
+						if(battle != null) {
+							Main.setScene(Main.deathScene);
+							battle = null;
+						}
+					}
+				}, 500);
+			}
+		}
+	}
+	
+	@Override
+	public void render(Graphics g) {
+		g.drawImage(background, 100, 0, null);
+		
+		if(battle != null) {
+			Entity player = battle.getPlayer();
+			Dino playerDino = player.getDino();
+			Move[] moves = playerDino.getMoves();
+			
+			Entity bot = battle.getBot();
+			Dino botDino = bot.getDino();
+
+			int pdx = endPlayerDamage > 0 ? new Random().nextInt(4) : 0;
+			int pdy = endPlayerDamage > 0 ? new Random().nextInt(4) : 0;
+			g.drawImage(playerDino.getImage(), player.x + pdx, player.y + pdy, 150, 150, null);
+
+			int bdx = endBotDamage > 0 ? new Random().nextInt(4) : 0;
+			int bdy = endBotDamage > 0 ? new Random().nextInt(4) : 0;
+			g.drawImage(botDino.getImage(), bot.x + 150 + bdx, bot.y + bdy, -150, 150, null);
+			
+			g.setColor(Color.white);
+			g.setFont(new Font("SansSerif", 1, 12));
+			
+			g.drawString(playerDino.getName(), player.x + 25, player.y - 20);
+			g.drawString(botDino.getName(), bot.x + 25, bot.y - 20);
+			
+			g.setColor(Color.red);
+			g.fillRect(player.x, player.y - 10, HEALTH_BAR_WIDTH, 15);
+			g.fillRect(bot.x, bot.y - 10, HEALTH_BAR_WIDTH, 15);
+
+			g.setColor(Color.green);
+			g.fillRect(bot.x, bot.y - 10, (int)(((double)bot.health / 100.0) * HEALTH_BAR_WIDTH), 15);
+			g.fillRect(player.x, player.y - 10, (int)(((double)player.health / 100.0) * HEALTH_BAR_WIDTH), 15);
+
+			// Show dialogue if players turn
+			if(showDialogue) {
+				g.drawImage(dialogue, 200, 20, null);
+				
+				
+				g.setColor(Color.black);
+				g.setFont(new Font("SansSerif", 1, 12));
+				for(int i = 0; i < moves.length; i++) {
+					Move m = moves[i];
+					
+					Color textColor = DinoUtil.getTextColorFromAttackType(m.getType());
+					
+					g.setColor(textColor);
+					g.drawString("(" + (i + 1) + ") " + m.getName() + " (" + m.getType() + ")", 240, 45 + (i * 40));
+					
+					g.setColor(Color.black);
+					g.drawString(m.getDescription(), 240, 45 + 18 + (i * 40));
+					
+					g.drawString("Press the corresponding number key on the keyboard to use an attack", 240, 180);
+				}
+			}
+		}
+	}
+	
+	public void startBattle(Entity player, Entity bot) {
+		endBotDamage = 0;
+		endPlayerDamage = 0;
+		blockTime = 0;
+		blockAttempted = false;
+		blockSuccessful = false;
+		showDialogue = true;
+		battle = new Battle(player, bot);
+	}
+	
+	public void attack(Entity attacker, Entity victim, int amount, String attackName, String attackType) {
+		boolean attackerIsPlayer = attacker.getDino().getId().equals(battle.getPlayer().getDino().getId());
+		if(!(blockSuccessful && attackerIsPlayer)) {
+			victim.damage(amount);
+		}
+		
+		if(attackerIsPlayer) {
+			endBotDamage = System.currentTimeMillis() + 200;
+			
+			class ParticleRenderer implements Renderable {
+				public void render(Graphics g) {
+					
+				}
+			}
+		} else {
+			endPlayerDamage = System.currentTimeMillis() + 200;
+		}
+		
+		boolean cloneBlockSuccessful = blockSuccessful;
+		
+		class AttackNameRenderer implements Renderable {
+			double dy = 0;
+			int rx = new Random().nextInt(25) * (new Random().nextInt(2) == 1 ? -1 : 1);
+			int ry = new Random().nextInt(25) * (new Random().nextInt(2) == 1 ? -1 : 1);
+			
+			public void render(Graphics g) {
+				dy += 5 * Main.deltaTime;
+
+				g.setFont(new Font("SansSerif", 1, 15));
+				g.setColor(DinoUtil.getTextColorFromAttackType(attackType));
+				if(attackerIsPlayer) {
+					g.drawString("You used " + attackName, 450 + rx, 320 + ry + (int) dy);
+				} else {
+					if(cloneBlockSuccessful) {
+						g.setColor(Color.white);
+						g.drawString("You blocked the attack", 740 + rx, 350 + ry + (int) dy);
+					} else {
+						g.drawString(battle.getBot().getDino().getName() + " used " + attackName, 740, 350 + (int) dy);
+					}
+				}
+			}
+		}
+		
+		class DamageRenderer implements Renderable {
+			double dy = 0;
+			public void render(Graphics g) {
+				dy += 5 * Main.deltaTime;
+				g.setColor(cloneBlockSuccessful ? Color.white : new Color(245, 38, 41));
+				g.setFont(new Font("SansSerif", 1, 16));
+				g.drawString(cloneBlockSuccessful ? "Blocked!" : "-" + amount, victim.x + 15, victim.y + 20 + (int) dy);
+			}
+		}
+		
+		Particle damageParticle = new Particle(new DamageRenderer(), 1500);
+		damageParticle.play();
+		
+		Particle attackNameParticle = new Particle(new AttackNameRenderer(), 3000);
+		attackNameParticle.play();
+	}
+	
+	@Override
+	public void keyPressed(int keyCode) {
+		if(battle.turn == 1 && (keyCode == KeyEvent.VK_1 || keyCode == KeyEvent.VK_2 || keyCode == KeyEvent.VK_3)) {
+			Entity bot = battle.getBot();
+			Entity player = battle.getPlayer();
+			
+			Move[] playerMoves = player.getDino().getMoves();
+			Move[] botMoves = bot.getDino().getMoves();
+			
+			if(keyCode == KeyEvent.VK_1) {
+				String attackType = playerMoves[0].getType();
+				String attackName = playerMoves[0].getName();
+				attack(player, bot, new Random().nextInt(7), attackName, attackType);
+			} else if(keyCode == KeyEvent.VK_2) {
+				String attackType = playerMoves[1].getType();
+				String attackName = playerMoves[1].getName();
+				attack(player, bot, new Random().nextInt(7), attackName, attackType);
+			} else if(keyCode == KeyEvent.VK_3) {
+				String attackType = playerMoves[2].getType();
+				String attackName = playerMoves[2].getName();
+				attack(player, bot, new Random().nextInt(7), attackName, attackType);
+			}
+			
+			battle.turn = 2;
+			showDialogue = false;
+			
+			Runnable botTurn = new Runnable() {
+				public void run() {
+					if(battle != null) {
+						Move m = botMoves[new Random().nextInt(botMoves.length)];
+						if(blockAttempted && System.currentTimeMillis() - blockTime < 250) {
+							System.out.println("Successful block");
+							blockSuccessful = true;
+						} else {
+							System.out.println("Failed block");
+						}
+						attack(battle.getBot(), battle.getPlayer(), new Random().nextInt(7), m.getName(), m.getType());
+					}
+				}
+			};
+			
+			Runnable resetTurn = new Runnable() {
+				public void run() {
+					if(battle != null) {
+						showDialogue = true;
+						battle.turn = 1;
+						blockAttempted = false;
+						blockSuccessful = false;
+						blockTime = 0;
+					}
+				}
+			};
+
+			int botTurnTime = 500 + new Random().nextInt(1500);
+			
+			Main.scheduler.scheduleTask(botTurn, botTurnTime);
+			Main.scheduler.scheduleTask(resetTurn, botTurnTime + 500);
+		} else if(battle.turn == 2 && keyCode == KeyEvent.VK_Z) {
+			System.out.println("Detected");
+			if(!blockAttempted) {
+				blockAttempted = true;
+				blockTime = System.currentTimeMillis();
+				System.out.println("Block attempted");
+			}
+		}
+	}
+}

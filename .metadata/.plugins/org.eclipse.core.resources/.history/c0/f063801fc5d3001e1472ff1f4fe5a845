@@ -1,0 +1,11 @@
+package com.rowdy.dino;
+
+public class DinoScheduler {
+	public void tick() {
+		
+	}
+	
+	public void scheduleTask(Runnable run, long ms) {
+		
+	}
+}

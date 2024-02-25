@@ -12,6 +12,40 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class RequestHandler {
+	public static WebResponse get(String url, Map<String, String> headers)
+			throws IOException, URISyntaxException {
+		
+		// Create connection and set to GET
+		URL apiUrl = new URI(url).toURL();
+        HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+        connection.setRequestMethod("GET");
+        
+        // Set headers
+        if(headers != null) {
+        	for(String key : headers.keySet()) {
+            	connection.setRequestProperty(key, headers.get(key));
+            }
+        }
+        
+        // Read response
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        
+        // Clean up
+        reader.close();
+        connection.disconnect();
+        
+        // Create response
+        WebResponse wr = new WebResponse(response.toString(), connection.getResponseCode());
+        
+        return wr;
+	}
+	
 	public static WebResponse post(String url, Map<String, String> headers, String requestBody)
 			throws IOException, URISyntaxException {
 		
@@ -19,6 +53,8 @@ public class RequestHandler {
 		URL apiUrl = new URI(url).toURL();
         HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
         connection.setRequestMethod("POST");
+        
+        connection.setRequestProperty("Content-Type", "application/json");
         
         // Set headers
         if(headers != null) {

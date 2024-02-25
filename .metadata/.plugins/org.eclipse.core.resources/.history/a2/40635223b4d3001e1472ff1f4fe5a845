@@ -1,0 +1,40 @@
+package com.rowdy.dino;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class DinoUtil {
+	public static String jsonStringify(Map<String, Object> data) {
+		try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(data);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "{}"; // Return empty object in case of error
+        }
+	}
+	
+	public static BufferedImage createImageFromURL(String urlStr) {
+		URL url = null;
+		try {
+			@SuppressWarnings("deprecation")
+			url = new URL(urlStr);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+        try {
+			return ImageIO.read(url);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        return null;
+	}
+}

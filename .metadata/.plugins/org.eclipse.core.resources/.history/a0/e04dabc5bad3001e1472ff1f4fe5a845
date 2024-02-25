@@ -1,0 +1,7 @@
+package com.rowdy.dino;
+
+public class Nav {
+	public static void render(Graphics g) {
+		
+	}
+}

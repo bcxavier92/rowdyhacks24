@@ -1,0 +1,47 @@
+package com.rowdy.dino.graphics;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import com.rowdy.dino.Battle;
+import com.rowdy.dino.entity.Entity;
+
+public class BattleScene extends Scene {
+	
+	private BufferedImage background;
+	private Battle battle = null;
+	
+	@Override
+	public void init() {
+		try {
+            // Provide the path to your image file relative to the project directory
+            String imagePath = "./images/background.png"; // Relative path to the image file
+            File file = new File(imagePath);
+            System.out.println("Exists: " + file.exists());
+            System.out.println("Path: " + file.getAbsolutePath());
+            background = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	@Override
+	public void render(Graphics g) {
+		g.drawImage(background, 100, 0, null);
+		
+		Entity player = battle.getPlayer();
+		Dino playerDiner = player.getDino();
+		
+		if(battle != null) {
+			g.drawImage(playerDino.getImage(), 0, 0, null);
+		}
+	}
+	
+	public void startBattle(Entity player, Entity bot) {
+		battle = new Battle(player, bot);
+	}
+}

@@ -1,0 +1,13 @@
+package com.rowdy.dino.entity;
+
+import java.awt.Graphics;
+
+public class ParticleTracker {
+	public ParticleTracker() {
+		
+	}
+	
+	public void render(Graphics g) {
+		
+	}
+}

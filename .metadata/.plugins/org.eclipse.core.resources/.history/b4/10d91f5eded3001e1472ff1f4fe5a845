@@ -1,0 +1,16 @@
+package com.rowdy.dino.entity;
+
+import java.awt.Color;
+import java.awt.Font;
+
+import com.rowdy.dino.graphics.Renderable;
+
+public class Particle {
+	private Renderable renderable;
+	private int duration;
+	
+	public Particle(Renderable renderable, int duration) {
+		this.renderable = renderable;
+		this.duration = duration;
+	}
+}

@@ -1,30 +1,45 @@
 import sharp from 'sharp'
-import { BODY_1, EYES_1, HAT_1, HEAD_1, TAIL_1 } from './interface/bodyPart'
-import { BodySet } from './interface/bodySet'
+import {
+  ALL_BODIES,
+  ALL_EYES,
+  ALL_HATS,
+  ALL_HEADS,
+  ALL_TAILS,
+} from './interface/bodyPart'
 import { Dino } from './interface/dino'
 import path from 'path'
-import { Color } from './interface/color'
+import { DINO_COLORS } from './interface/color'
 import DinoModel from './model/dinoModel'
 import 'dotenv/config'
+import { ObjectId } from 'mongodb'
 
 const { CF_API_KEY } = process.env
 
-export const createRandomDino = (): Dino => {
-  const bodySet: BodySet = {
-    head: HEAD_1,
-    body: BODY_1,
-    tail: TAIL_1,
-    eyes: EYES_1,
-    hat: HAT_1,
+export const attemptDinoGeneration = async (maxAttempts: number) => {
+  let dino = null
+  let currentAttempt = 1
+  while (!dino) {
+    console.log(
+      `Attempting to generate dinosaur (${currentAttempt}/${maxAttempts})`
+    )
+    try {
+      dino = await generateEntireDino()
+      break
+    } catch (err) {
+      console.error(`Failed to generate dinosaur.`)
+    } finally {
+      if (currentAttempt == maxAttempts || dino != null) break
+      console.log('Retrying generation')
+      currentAttempt++
+    }
   }
 
-  const dino: Dino = {
-    id: 'ahdohuwhdao9wdada0soid',
-    name: 'spinosaurus',
-    bodySet: bodySet,
-    color: { r: 100, g: 100, b: 100 },
+  if (!dino) {
+    console.error('Reached max attempts and could not get dino')
+    return null
   }
 
+  console.log('Generated dino successfully')
   return dino
 }
 
@@ -42,55 +57,122 @@ export const createImageFile = async (dino: Dino) => {
   // Remove the first element from imagePaths
   const remainingImagePaths = imagePaths.slice(1)
 
-  console.log('Image paths')
-  console.log(remainingImagePaths)
+  const { r, g, b } = dino.color
+  const colorized = await replaceAllPixelsColor(
+    baseImage.composite(remainingImagePaths),
+    { r: 31, g: 211, b: 235 },
+    { r, g, b }
+  )
 
-  try {
-    // @ts-ignore
-    baseImage.composite(remainingImagePaths).toFile('test-output.png')
-  } catch (error) {
-    console.error(error)
-  }
+  colorized.toFile(
+    path.join(__dirname, '../assets/image/dinos/' + dino._id + '.png')
+  )
 }
 
-export const saveDinoToDB = (name: String, bodySet: BodySet, color: Color) => {
+export const saveDinoToDB = async (dino: Dino) => {
+  const { _id, name, bodySet, color, moves } = dino
   const newDino = new DinoModel({
+    _id,
     name,
     bodySet,
     color,
+    moves,
   })
 
-  newDino.save()
+  return await newDino.save()
 }
 
 export const generateEntireDino = async () => {
-  const words = (await getRandomWords(60)).split(', ')
+  const words = (await getRandomWords(30)).split(', ')
   const seed1 = words.slice(0, 15).toString()
   const seed2 = words.slice(15, 30).toString()
-  const seed3 = words.slice(30, 45).toString()
-  const seed4 = words.slice(45, 60).toString()
 
   const strName = await aiResponseToJson(
     (
       await aiGenerateName(seed1)
     ).result.response
   )
+
   const strMoves = await aiResponseToJson(
     (
       await aiGenerateMoves(seed2)
     ).result.response
   )
-  //   const strMove2 = aiResponseToJson((await aiGenerateMove(seed3)).result)
-  //   const strMove3 = aiResponseToJson((await aiGenerateMove(seed4)).result)
 
-  console.log(
-    strName + ' / ' + strName.indexOf('{') + ' / ' + strName.indexOf('}')
+  const jsonMoves = JSON.parse(strMoves)
+
+  const name = JSON.parse(strName).name
+  const moves = jsonMoves.moves.map((move: any) => ({
+    name: move.moveName,
+    type: move.attackType,
+    description: move.moveDescription,
+  }))
+
+  const head = ALL_HEADS[Math.floor(Math.random() * ALL_HEADS.length)]
+  const body = ALL_BODIES[Math.floor(Math.random() * ALL_BODIES.length)]
+  const eyes = ALL_EYES[Math.floor(Math.random() * ALL_EYES.length)]
+  const tail = ALL_TAILS[Math.floor(Math.random() * ALL_TAILS.length)]
+  const hat = ALL_HATS[Math.floor(Math.random() * ALL_HATS.length)]
+
+  const bodySet = {
+    head,
+    body,
+    eyes,
+    tail,
+    hat,
+  }
+
+  const _id = new ObjectId()
+
+  const color = DINO_COLORS[Math.floor(Math.random() * DINO_COLORS.length)]
+
+  const dino: Dino = {
+    _id,
+    name,
+    bodySet,
+    color,
+    moves,
+  }
+
+  await createImageFile(dino)
+
+  const model = await saveDinoToDB(dino)
+
+  return model
+}
+
+// @ts-ignore
+const replaceAllPixelsColor = (image, targetColor, replacementColor) => {
+  return (
+    image
+      .raw()
+      .toBuffer({ resolveWithObject: true })
+      // @ts-ignore
+      .then(({ data, info }) => {
+        const { width, height, channels } = info
+        for (let i = 0; i < width * height * channels; i += channels) {
+          // Simple color comparison
+          if (
+            data[i] === targetColor.r &&
+            data[i + 1] === targetColor.g &&
+            data[i + 2] === targetColor.b
+          ) {
+            data[i] = replacementColor.r // R
+            data[i + 1] = replacementColor.g // G
+            data[i + 2] = replacementColor.b // B
+          }
+        }
+
+        // Return a new sharp object from the modified raw data
+        return sharp(data, {
+          raw: {
+            width,
+            height,
+            channels,
+          },
+        })
+      })
   )
-  console.log(
-    strMoves + ' / ' + strMoves.indexOf('{') + ' / ' + strName.indexOf('}')
-  )
-  //   console.log(strMove2)
-  //   console.log(strMove3)
 }
 
 export const aiResponseToJson = async (str: String) => {
@@ -169,12 +251,7 @@ export const aiGenerateName = async (seed: String) => {
 export const getRandomWords = async (amount: number): Promise<String> => {
   const url = `https://random-word-api.herokuapp.com/word?number=${amount}`
 
-  try {
-    const response = await fetch(url)
-    const data = await response.json()
-    return data.join(', ')
-  } catch (error) {
-    console.error('Error:', error)
-    return 'An error occurred'
-  }
+  const response = await fetch(url)
+  const data = await response.json()
+  return data.join(', ')
 }

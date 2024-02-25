@@ -1,0 +1,31 @@
+package com.rowdy.dino;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DinoScheduler {
+	
+	private List<GameTask> tasks;
+	public DinoScheduler() {
+		tasks = new ArrayList<GameTask>();
+	}
+	
+	public void tick() {
+		List<GameTask> removeTasks = new ArrayList<GameTask>();
+		for(GameTask task : tasks) {
+			if(task.runAt() >= System.currentTimeMillis()) {
+				task.getRunnable().run();
+				removeTasks.add(task);
+			}
+		}
+		
+		for(GameTask remove : removeTasks) {
+			tasks.remove(remove);
+		}
+	}
+	
+	public void scheduleTask(Runnable run, long ms) {
+		GameTask task = new GameTask(run, System.currentTimeMillis() + ms);
+		tasks.add(task);
+	}
+}

@@ -1,0 +1,15 @@
+package com.rowdy.dino.graphics;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+import com.rowdy.dino.Main;
+
+public class BattleScene extends Scene {
+	@Override
+	public void render(Graphics g) {
+		g.setColor(Color.blue);
+		g.fillRect(Main.navWidth, 0, Main.frameSize.width - Main.navWidth, Main.frameSize.height);
+		System.out.println("HI");
+	}
+}

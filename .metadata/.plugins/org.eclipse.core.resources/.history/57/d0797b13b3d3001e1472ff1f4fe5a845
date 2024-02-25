@@ -1,0 +1,26 @@
+package com.rowdy.dino.entity;
+
+import java.awt.Image;
+
+public class Dino {
+	String id;
+	String name;
+	Move[] moves;
+	public Dino(String id, String name, Move[] moves, Image image) {
+		this.id = id;
+		this.name = name;
+		this.moves = moves;
+	}
+	
+	public String getId() {
+		return id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public Move[] getMoves() {
+		return moves;
+	}
+}

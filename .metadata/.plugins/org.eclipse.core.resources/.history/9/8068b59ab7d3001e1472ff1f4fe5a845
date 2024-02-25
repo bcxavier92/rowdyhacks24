@@ -1,0 +1,23 @@
+package com.rowdy.dino.entity;
+
+public class Entity {
+	private Dino dino;
+	public int level;
+	public int health;
+	public int x;
+	public int y;
+	public int orientation; // 1 or -1
+	
+	public Entity(Dino dino, int level, int health, int x, int y, int orientation) {
+		this.dino = dino;
+		this.level = level;
+		this.health = health;
+		this.x = x;
+		this.y = y;
+		this.orientation = orientation;
+	}
+	
+	public Dino getDino() {
+		return dino;
+	}
+}

@@ -1,0 +1,27 @@
+package com.rowdy.dino.graphics;
+
+import java.awt.Graphics;
+
+public class Scene {
+	private boolean showing = false;
+	public Scene() {
+		
+	}
+	
+	public boolean isShowing() {
+		return showing;
+	}
+
+	public boolean setShowing(boolean showing) {
+		this.showing = showing;
+		return showing;
+	}
+	
+	public void render(Graphics g) {
+		
+	}
+	
+	public void tick(double deltaTime) {
+		
+	}
+}

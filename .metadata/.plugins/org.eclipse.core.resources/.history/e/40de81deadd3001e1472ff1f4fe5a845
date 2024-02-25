@@ -1,0 +1,30 @@
+package com.rowdy.dino.graphics;
+
+import java.awt.Color;
+import java.awt.Graphics;
+
+import com.rowdy.dino.Main;
+
+public class Scene {
+	private boolean showing = false;
+	public Scene() {
+		
+	}
+	
+	public boolean isShowing() {
+		return showing;
+	}
+
+	public boolean setShowing(boolean showing) {
+		this.showing = showing;
+		return showing;
+	}
+	
+	public void render(Graphics g) {
+		
+	}
+	
+	public void tick() {
+		
+	}
+}

@@ -1,0 +1,150 @@
+package com.rowdy.dino;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import com.rowdy.dino.entity.Dino;
+import com.rowdy.dino.entity.Entity;
+import com.rowdy.dino.graphics.BattleScene;
+import com.rowdy.dino.graphics.Scene;
+
+public class Main {
+	
+	public static final String API_URL = "http://localhost:3000";
+	public static final int GROUND_LEVEL = 490;
+	
+	public static JFrame frame;
+	public static JPanel panel;
+	public static Dimension frameSize = new Dimension(1200, 690);
+	public static int navWidth = 100;
+	public static long lastTime = System.nanoTime();
+	public static double deltaTime = 0;
+	public static Nav nav;
+	public static Battle battle;
+	
+	public static List<Scene> scenes = new ArrayList<Scene>();
+	public static BattleScene battleScene;
+	
+	public static void main(String[] args) {
+		nav = new Nav();
+		
+		battleScene = new BattleScene();
+		battleScene.setShowing(true);
+		scenes.add(battleScene);
+		
+		frame = new JFrame("Dinos | Rowdy Hacks 24");
+		frame.setSize(frameSize);
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+		frame.addKeyListener(getKeyListener());
+		
+		panel = new JPanel() {
+            private static final long serialVersionUID = -6875075798821292109L;
+
+			@Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                render(g);
+            }
+        };
+		panel.setSize(frameSize);
+		
+		frame.add(panel);
+		
+		loop();
+		
+		try {
+			doBattle();
+		} catch (IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static KeyListener getKeyListener() {
+		return new KeyListener() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {	}
+			
+			@Override
+			public void keyReleased(KeyEvent e) {	}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				int key = e.getKeyCode();
+				
+				if(battleScene.isShowing()) {
+					battleScene.keyPressed(e.getKeyCode());
+				}
+			}
+		};
+	}
+	
+	public static void doBattle() throws IOException, URISyntaxException {
+		String dinoIdPlayer = "65daf34eae814f1e00137f4b";
+		String dinoIdBot = "65daf303ae814f1e00137f39";
+		
+		Dino playerDino = DinoUtil.createDinoFromId(dinoIdPlayer);
+		Entity playerEntity = new Entity(playerDino, 100, 350, GROUND_LEVEL);
+		
+		Dino botDino = DinoUtil.createDinoFromId(dinoIdBot);
+		Entity botEntity = new Entity(botDino, 100, 775, GROUND_LEVEL);
+		
+		battleScene.startBattle(playerEntity, botEntity);
+	}
+	
+	public static void loop() {
+		Thread loopThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while(true) {
+					long now = System.nanoTime();
+					deltaTime = (now - lastTime) / 1e9;
+					lastTime = now;
+					
+					tick()
+					panel.repaint();
+					
+					try {
+						Thread.sleep(16);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		loopThread.start();
+	}
+	
+	public static void tick() {
+		for(Scene scene : scenes) {
+			if(scene.isShowing()) {
+				scene.tick();
+			}
+		}
+	}
+	
+	public static void render(Graphics g) {
+		nav.render(g);
+		
+		for(Scene scene : scenes) {
+			if(scene.isShowing()) {
+				scene.render(g);
+			}
+		}
+	}
+}

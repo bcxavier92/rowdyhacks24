@@ -1,0 +1,34 @@
+package com.rowdy.dino.entity;
+
+public class Entity {
+	private Dino dino;
+	private int level;
+	private int health;
+	public Entity(Dino dino, int level, int health) {
+		this.dino = dino;
+		this.level = level;
+		this.health = health;
+	}
+	
+	public Dino getDino() {
+		return dino;
+	}
+	
+	public int getLevel() {
+		return level;
+	}
+	
+	public int getHealth() {
+		return health;
+	}
+	
+	public int setLevel(int level) {
+		this.level = level;
+		return level;
+	}
+	
+	public int setHealth(int health) {
+		this.health = health;
+		return health;
+	}
+}

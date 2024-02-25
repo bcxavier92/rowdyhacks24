@@ -1,0 +1,60 @@
+package com.rowdy.dino.graphics;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import com.rowdy.dino.Battle;
+import com.rowdy.dino.entity.Dino;
+import com.rowdy.dino.entity.Entity;
+
+public class BattleScene extends Scene {
+	
+	private BufferedImage background;
+	private Battle battle = null;
+	
+	public BattleScene() {
+		try {
+            String imagePath = "./images/background.png";
+            File file = new File(imagePath);
+            background = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	@Override
+	public void render(Graphics g) {
+		g.drawImage(background, 100, 0, null);
+		
+		if(battle != null) {
+			Entity player = battle.getPlayer();
+			Dino playerDino = player.getDino();
+			
+			Entity bot = battle.getBot();
+			Dino botDino = bot.getDino();
+
+			g.drawImage(playerDino.getImage(), player.x, player.y, 150, 150, null);
+			
+			g.drawImage(botDino.getImage(), bot.x + 150, bot.y, -150, 150, null);
+			
+			g.setColor(Color.white);
+			g.setFont(new Font("SansSerif", 1, 14));
+			
+			g.drawString(playerDino.getName(), player.x + 25, player.y - 20);
+			g.drawString(botDino.getName(), bot.x + 25, bot.y - 20);
+			
+			g.setColor(Color.red);
+			g.fillRect(player.x, player.y - 10, 150, 15);
+		}
+	}
+	
+	public void startBattle(Entity player, Entity bot) {
+		battle = new Battle(player, bot);
+	}
+}

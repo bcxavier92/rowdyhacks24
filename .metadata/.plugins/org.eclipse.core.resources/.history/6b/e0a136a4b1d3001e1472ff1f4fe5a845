@@ -1,0 +1,12 @@
+package com.rowdy.dino.entity;
+
+public class Dino {
+	String id;
+	String name;
+	String moves;
+	public Dino(String id, String name, Move[] moves) {
+		this.id = id;
+		this.name = name;
+		this.moves = moves;
+	}
+}

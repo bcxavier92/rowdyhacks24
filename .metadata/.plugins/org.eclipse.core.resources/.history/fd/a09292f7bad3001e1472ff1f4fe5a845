@@ -1,0 +1,16 @@
+package com.rowdy.dino;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
+public class Nav {
+	private BufferedImage swords;
+	public Nav() {
+		
+	}
+	public static void render(Graphics g) {
+		g.setColor(new Color(79, 69, 53));
+		g.fillRect(0, 0, Main.navWidth, Main.frameSize.height);
+	}
+}

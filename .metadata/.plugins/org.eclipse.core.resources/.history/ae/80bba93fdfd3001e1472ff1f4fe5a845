@@ -1,0 +1,21 @@
+package com.rowdy.dino.entity;
+
+import java.awt.Color;
+import java.awt.Font;
+
+import com.rowdy.dino.graphics.Renderable;
+
+public class Particle {
+	private Renderable renderable;
+	private long expireTime;
+	
+	public Particle(Renderable renderable, long duration) {
+		this.renderable = renderable;
+		this.expireTime = System.currentTimeMillis() + duration;
+	}
+	
+	public Renderable getRenderable() {
+		return renderable;
+	}
+	
+}

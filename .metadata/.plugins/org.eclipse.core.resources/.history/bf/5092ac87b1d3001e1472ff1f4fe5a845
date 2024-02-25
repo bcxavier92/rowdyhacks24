@@ -1,0 +1,7 @@
+package com.rowdy.dino.entity;
+
+public class Dino {
+	public Dino(String name, ) {
+		
+	}
+}

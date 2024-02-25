@@ -1,0 +1,5 @@
+package com.rowdy.dino.entity;
+
+public class Dino {
+
+}

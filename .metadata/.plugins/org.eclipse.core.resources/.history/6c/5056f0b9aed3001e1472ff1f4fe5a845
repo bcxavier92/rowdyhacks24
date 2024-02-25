@@ -1,0 +1,33 @@
+package com.rowdy.dino.graphics;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import com.rowdy.dino.Main;
+
+public class BattleScene extends Scene {
+	private BufferedImage background;
+	
+	@Override
+	public void init() {
+		try {
+            // Provide the path to your image file relative to the project directory
+            String imagePath = "../images/Layer_0011_0.png"; // Relative path to the image file
+            File file = new File(imagePath);
+            background = ImageIO.read(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	@Override
+	public void render(Graphics g) {
+		g.setColor(Color.blue);
+		g.drawImage(background, 0, 0, 0, 0, 0, 0, 0, 0, null);
+	}
+}

@@ -1,0 +1,18 @@
+package com.rowdy.dino.entity;
+
+public class ParticleLife {
+	private Particle particle;
+	private long expireTime;
+	public ParticleLife(Particle particle, long expireTime) {
+		this.particle = particle;
+		this.expireTime = expireTime;
+	}
+	
+	public Particle getParticle() {
+		return particle;
+	}
+	
+	public long expireTime() {
+		return expireTime;
+	}
+}

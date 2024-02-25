@@ -1,0 +1,17 @@
+package com.rowdy.dino.entity;
+
+import java.awt.Color;
+import java.awt.Font;
+
+import com.rowdy.dino.graphics.Renderable;
+
+public class Particle {
+	private Renderable renderable;
+	private String text;
+	private Font font;
+	private Color color;
+	
+	public Particle(Renderable renderable, int x, int y, int duration) {
+		
+	}
+}
