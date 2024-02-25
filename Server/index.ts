@@ -15,8 +15,8 @@ import { existsSync } from 'fs'
 import DinoModel from './src/model/dinoModel'
 import CaughtModel from './src/model/caughtModel'
 
-const mongoURI =
-  'mongodb+srv://hacker24:z2r9eOUQyvFxnnYi@rowdyhacks24.1gnm4ij.mongodb.net/'
+// @ts-ignore
+const mongoURI: string = process.env.MONGO_URI
 
 mongoose.connect(mongoURI)
 
