@@ -1,0 +1,9 @@
+package com.rowdy.dino;
+
+import java.util.Map;
+
+public class DinoUtil {
+	public static String jsonStringify(Map<String, String> data) {
+		
+	}
+}

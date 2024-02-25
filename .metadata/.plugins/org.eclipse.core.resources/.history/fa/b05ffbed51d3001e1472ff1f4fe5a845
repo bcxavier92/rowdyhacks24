@@ -1,0 +1,49 @@
+package com.rowdy.dino;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+public class RequestHandler {
+	public static void get(String address) {
+		try {
+            // Specify the URL of the API or web service
+            String url = "https://api.example.com/data";
+
+            // Create a URL object
+			URL apiUrl = new URI(url).toURL();
+
+            // Open a connection to the URL
+            HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+
+            // Set the request method to GET
+            connection.setRequestMethod("GET");
+
+            // Get the response code
+            int responseCode = connection.getResponseCode();
+            System.out.println("Response Code: " + responseCode);
+
+            // Read the response from the API
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            StringBuilder response = new StringBuilder();
+
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // Print the response
+            System.out.println("Response: " + response.toString());
+
+            // Close the connection
+            connection.disconnect();
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+	}
+}

@@ -1,0 +1,10 @@
+package com.rowdy.dino.connection;
+
+public class WebResponse {
+	
+	private String responseString;
+	private 
+	public WebResponse() {
+		
+	}
+}

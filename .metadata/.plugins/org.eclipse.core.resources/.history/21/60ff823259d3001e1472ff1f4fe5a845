@@ -1,0 +1,13 @@
+package com.rowdy.dino.entity;
+
+import java.awt.Color;
+
+public class Dino {
+	private BodySet bodySet;
+	private Color primaryColor;
+	private Color secondaryColor;
+	
+	public Dino(BodySet bodySet) {
+		
+	}
+}

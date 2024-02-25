@@ -1,0 +1,53 @@
+package com.rowdy.dino;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class Main {
+	
+	public static JFrame frame;
+	public static JPanel panel;
+	public static Dimension frameSize = new Dimension(800, 600);
+	
+	public static void main(String[] args) {
+		frame = new JFrame("Rowdy Hacks 24");
+		frame.setSize(frameSize);
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+		panel = new JPanel() {
+            private static final long serialVersionUID = -6875075798821292109L;
+
+			@Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                render(g);
+            }
+        };
+		panel.setSize(frameSize);
+		
+		frame.add(panel);
+	}
+	
+	public static void loop() {
+		while(true) {
+			tick();
+			panel.repaint();
+		}
+	}
+	
+	public static void tick() {
+		
+	}
+	
+	public static void render(Graphics g) {
+		graphics.setColor(Color.GREEN);
+		graphics.drawRect(0, 0, 400, 300);
+	}
+}

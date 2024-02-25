@@ -1,0 +1,24 @@
+package com.rowdy.dino;
+
+import java.awt.Dimension;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class Main {
+	
+	public static JFrame frame;
+	public static JPanel panel;
+	public static Dimension frameSize = new Dimension(800, 600);
+	
+	public static void main(String[] args) {
+		frame = new JFrame("Rowdy Hacks 24");
+		frame.setSize(frameSize);
+		frame.setResizable(false);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+		panel.setSize(frameSize);
+	}
+}

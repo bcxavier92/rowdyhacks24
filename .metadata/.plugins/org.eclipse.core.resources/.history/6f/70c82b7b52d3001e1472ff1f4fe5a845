@@ -1,0 +1,37 @@
+package com.rowdy.dino.connection;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+public class RequestHandler {
+	public static WebResponse get(String url) {
+		try {
+			URL apiUrl = new URI(url).toURL();
+
+            HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+            connection.setRequestMethod("GET");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            StringBuilder response = new StringBuilder();
+
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            connection.disconnect();
+            
+            WebResponse wr = new WebResponse(response.toString(), connection.getResponseCode())
+            
+            return wr
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+	}
+}

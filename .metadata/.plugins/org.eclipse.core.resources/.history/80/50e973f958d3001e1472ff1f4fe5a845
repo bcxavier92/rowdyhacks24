@@ -1,0 +1,11 @@
+package com.rowdy.dino.entity;
+
+public enum BodyPart {
+	ASD("");
+	
+	private final String filePath;
+	
+	private BodyPart(String filePath) {
+		this.filePath = filePath;
+	}
+}
