@@ -655,3 +655,7 @@
 2024-02-24 21:49:25,868 [Worker-54: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory /Users/brandonxavier/Documents/Dev/java/rowdyhacks24/Client/src/main/resources
 2024-02-24 21:49:25,869 [Worker-54: Building] WARN  o.a.m.s.f.DefaultMavenResourcesFiltering - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
 2024-02-24 21:49:25,869 [Worker-54: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory /Users/brandonxavier/Documents/Dev/java/rowdyhacks24/Client/src/test/resources
+2024-02-24 22:00:19,108 [Worker-51: Building] WARN  o.a.m.s.f.DefaultMavenResourcesFiltering - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2024-02-24 22:00:19,109 [Worker-51: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory /Users/brandonxavier/Documents/Dev/java/rowdyhacks24/Client/src/main/resources
+2024-02-24 22:00:19,109 [Worker-51: Building] WARN  o.a.m.s.f.DefaultMavenResourcesFiltering - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2024-02-24 22:00:19,109 [Worker-51: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory /Users/brandonxavier/Documents/Dev/java/rowdyhacks24/Client/src/test/resources
